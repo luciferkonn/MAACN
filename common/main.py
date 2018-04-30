@@ -9,7 +9,7 @@ from common.grid_world import GridWorld
 from mddpg.evaluator import Evaluator
 import os
 ROOT = os.path.dirname(os.path.realpath(__file__))
-
+os.environ['CUDA_VISIBLE_DEVICE'] = '0'
 
 def train(num_iterations, env, evaluate, validate_steps, output, max_episode_length=None, debug=False):
     agent.is_training = True
