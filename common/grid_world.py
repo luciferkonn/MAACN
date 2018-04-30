@@ -34,7 +34,7 @@ class GridWorld(gym.Env):
         self.num_cars = args.n_agents
         self.num_cust = num_cust  # number of customer
         self.terminal_reward = terminal_reward
-        self.observation_shape = 5
+        self.observation_shape = 4
         self.demand_list = []
         self.action_shape = 4
 

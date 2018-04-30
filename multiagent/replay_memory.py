@@ -31,7 +31,7 @@ class ReplayMemory(object):
             obses.append(np.array(obs, copy=False))
             actions.append(np.array(action, copy=False))
             rewards.append(reward)
-            obses_next.append(np.array(obses_next, copy=False))
+            obses_next.append(np.array(obs_next, copy=False))
             dones.append(done)
         return np.array(obses), np.array(actions), np.array(rewards), np.array(obses_next), np.array(dones)
 
