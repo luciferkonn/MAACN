@@ -32,7 +32,7 @@ class ReplayMemory(object):
             actions.append(np.array(action, copy=False))
             rewards.append(reward)
             obses_next.append(np.array(obs_next, copy=False))
-            dones.append(done)
+            dones.append(0. if dones else 1.)
         return np.array(obses), np.array(actions), np.array(rewards), np.array(obses_next), np.array(dones)
 
     def make_index(self, batch_size):

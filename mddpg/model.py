@@ -12,7 +12,7 @@ import torch.nn.functional as F
 class Actor(nn.Module):
     def __init__(self, n_obs, n_actions, hidden1=300, hidden2=600):
         super(Actor, self).__init__()
-        self.fc1 = nn.Linear(n_obs, hidden1)
+        self.fc1 = nn.Linear(5, hidden1)
         self.fc2 = nn.Linear(hidden1, hidden2)
         self.fc3 = nn.Linear(hidden2, n_actions)
         self.relu = nn.ReLU()
@@ -31,9 +31,9 @@ class Actor(nn.Module):
 class Critic(nn.Module):
     def __init__(self, n_obs, n_actions, hidden1=300, hidden2=600):
         super(Critic, self).__init__()
-        self.fc1 = nn.Linear(n_obs, hidden1)
+        self.fc1 = nn.Linear(1000, hidden1)
         self.fc2 = nn.Linear(hidden1, hidden2)
-        self.fc3 = nn.Linear(hidden2, n_actions)
+        self.fc3 = nn.Linear(hidden2, 10)
         self.relu = nn.ReLU()
 
     def forward(self, x):
