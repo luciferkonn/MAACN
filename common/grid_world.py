@@ -44,7 +44,7 @@ class GridWorld(gym.Env):
         self.initiate_cust(num_cust)
         self.agents = self.cars_list
 
-    def _step(self, action_n):
+    def step(self, action_n):
         obs_n = []
         reward_n = []
         done_n = []
@@ -62,7 +62,7 @@ class GridWorld(gym.Env):
 
         return obs_n, reward_n, done_n, info_n
 
-    def _reset(self, cust_popup_episode=None, cars_list=None):
+    def reset(self, cust_popup_episode=None, cars_list=None):
         self.t = 0
         self.history = []
         self.demand_init_prob = np.random.random((self.grid_size, self.grid_size)) * self.customer_rate

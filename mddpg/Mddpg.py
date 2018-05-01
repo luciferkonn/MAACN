@@ -62,13 +62,10 @@ class MDDPG(object):
     def update_policy(self):
         obs_batch, action_batch, reward_batch, next_obs_batch, done_batch = self.memory.sample(self.batch_size)
         # Calculate the q values
-        next_obs_batch_reshape = next_obs_batch.reshape(-1, 4)
-        # print(np.shape(self.actor_target(to_tensor(next_obs_batch_reshape, volatile=True))))
-        # print(np.shape(to_tensor(next_obs_batch_reshape)))
-        # print(np.shape(np.concatenate((to_tensor(next_obs_batch_reshape), to_tensor(action_batch)), axis=0)))
-        # print(self.critic(np.vstack((to_tensor(obs_batch), to_tensor(action_batch)))))
-        next_q_values = self.critic_target([to_tensor(next_obs_batch_reshape, volatile=True),
-            self.actor_target(to_tensor(next_obs_batch_reshape, volatile=True)), ])
+        next_q_values = self.critic_target([next_obs_batch,
+            # to_tensor(next_obs_batch, volatile=True),
+            self.actor_target(next_obs_batch)
+        ])
         next_q_values.volatile = False
         target_q_batch = to_tensor(reward_batch) + \
             self.discount * to_tensor(done_batch.astype(np.float)) * next_q_values
@@ -111,9 +108,8 @@ class MDDPG(object):
     def select_action(self, obs_t, decay_epsilon=True):
         action = np.zeros(self.n_agents)
         for i in range(self.n_agents):
-            # print(obs_t[i])
-            matrix = to_numpy(self.actor(to_tensor(np.array([obs_t[i]]).reshape(-1, 4))))
-            matrix = np.reshape(matrix, (4, -1))
+            matrix = to_numpy(self.actor(to_tensor(np.array([obs_t[i]]))))
+            matrix = np.reshape(matrix, (4, 20))
             # print(matrix)
             action[i] = np.argmax(np.sum(matrix, axis=1))
             # print(action[i])
