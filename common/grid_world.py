@@ -7,8 +7,8 @@ import random
 
 class GridWorld(gym.Env):
     def __init__(self, args, grid_size=5, num_cars=2, num_cust=10, cust_popup_episode=None, cust_wait_time=5, demand_limit=4,
-                 reward_per_cust=1, penalty_per_move=-0.1, penalty_per_collision=-1, penalty_per_hitting_wall=-2,
-                 reward_per_stay=-1, terminal_reward=10, customer_rate=0.04, obstacle_grid=None,
+                 reward_per_cust=1, penalty_per_move=-0.1, penalty_per_collision=-0.1, penalty_per_hitting_wall=-0.2,
+                 reward_per_stay=-0.1, terminal_reward=10, customer_rate=0.04, obstacle_grid=None,
                  reward_backprop_rate=0.9, reward_others_discount_rate=0.0, num_actions=5, unfulfilled_penalty=-1):
 
         self.grid_size = grid_size
