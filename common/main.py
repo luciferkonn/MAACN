@@ -23,10 +23,11 @@ def train(num_iterations, env, evaluate, validate_steps, output, max_episode_len
             agent.reset(observation)
 
         # agent pick action
-        if step <= args.warmup:
-            action = agent.random_action()
-        else:
-            action = agent.select_action(observation)
+        for i in range(args.n_agents):
+            if step <= args.warmup:
+                action = agent.random_action()
+            else:
+                action = agent.select_action(observation)
 
         # env response with next_observation, reward, done
         obs_next, reward, done, info = env.step(action)
@@ -120,7 +121,8 @@ if __name__ == '__main__':
     parser.add_argument('--resume', default='default', type=str, help='Resuming model path for testing')
     # new added
     parser.add_argument('--max_episode_len', default=400, type=int, help='maxepisode length')
-    parser.add_argument('--n_agents', default=10, type=int, help='number of agents in the environment')
+    parser.add_argument('--n_agents', default=2, type=int, help='number of agents in the environment')
+    parser.add_argument('--grid_size', default=6, type=int)
 
     # parser args
     args = parser.parse_args()
