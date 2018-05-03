@@ -60,7 +60,8 @@ def train(num_iterations, env, evaluate, validate_steps, output, max_episode_len
 
         if done:
             if debug:
-                prGreen('#{}: episode_reward:{} step:{}'.format(episode, episode_reward, step))
+                if step % 100 == 0:
+                    prGreen('#{}: episode_reward:{} step:{}'.format(episode, episode_reward, step))
             agent.memory.add(
                 observation,
                 agent.select_action(observation),

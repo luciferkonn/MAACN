@@ -66,6 +66,7 @@ class MDDPG(object):
         for i in range(self.n_agents):
             # reshape next_obs_batch to 64 * 4 * 5 * 5
             next_obs_batch_reshape = np.squeeze(next_obs_batch[:, i, :, :, :])
+            obs_batch_reshape = np.squeeze(obs_batch[:, i, :, :, :])
             # reshape action_batch
             next_q_values = self.critic_target([to_tensor(next_obs_batch_reshape, volatile=True),
                                                self.actor_target(to_tensor(next_obs_batch_reshape, volatile=True))])
@@ -74,23 +75,26 @@ class MDDPG(object):
             target_q_batch = to_tensor(reward_batch[:, i].reshape(-1, 1)) + \
                 self.discount * mat * next_q_values
             # Critic update
-            self.critic.zero_grad()
             obs_batch_reshape = np.squeeze(obs_batch[:, i, :, :, :])
-            q_batch = self.critic([to_tensor(obs_batch_reshape, volatile=True),
-                                   self.actor_target(to_tensor(obs_batch_reshape, volatile=True))])
+            # print(np.shape(action_batch))
+            # print(action_batch)
+            q_batch = self.critic([to_tensor(obs_batch_reshape),
+                                   to_tensor(action_batch[:,i].reshape(-1,1))])
+            self.critic.zero_grad()
             value_loss = criterion(q_batch, target_q_batch)
             value_loss.backward()
             self.critic_optim.step()
-            prPurple('critic loss: {}'.format(to_numpy(value_loss)[0]))
+            # prPurple('critic loss: {}'.format(to_numpy(value_loss)[0]))
 
             # Actor update
             self.actor.zero_grad()
-            policy_loss = -self.critic(to_tensor(obs_batch.reshape(-1, 1000)))
+            policy_loss = -self.critic([to_tensor(obs_batch_reshape),
+                                       self.actor(to_tensor(obs_batch_reshape))])
 
             policy_loss = policy_loss.mean()
             policy_loss.backward()
             self.actor_optim.step()
-            prRed('actor loss: {}'.format(to_numpy(policy_loss)[0]))
+            # prRed('actor loss: {}'.format(to_numpy(policy_loss)[0]))
 
         # Target update
         soft_update(self.actor_target, self.actor, self.tau)
@@ -112,10 +116,19 @@ class MDDPG(object):
     def select_action(self, obs_t, decay_epsilon=True):
         action = np.zeros(self.n_agents)
         for i in range(self.n_agents):
-            matrix = to_numpy(self.actor(to_tensor(np.array(obs_t[i].reshape(1,4,6,6)))))
-            matrix = np.reshape(matrix, (4, -1))
-            # print(matrix)
-            action[i] = np.argmax(np.sum(matrix, axis=1))
+            _action = to_numpy(self.actor(to_tensor(np.array(obs_t[i].reshape(1,4,6,6)))))
+            _action = np.sum(_action)
+            # print(_action)
+            if _action < 1:
+                action[i] = 0
+            elif 1<_action< 2:
+                action[i] = 1
+            elif 2<_action<3:
+                action[i] = 2
+            elif 3<_action<4:
+                action[i] = 3
+            else:
+                action[i] = 4
             # print(action[i])
             # action[i] += self.is_training * max(self.epsilon, 0) * self.random_process.sample()
             # action[i] = np.clip(action[i], -1., 1.)
